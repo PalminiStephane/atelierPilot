@@ -1,5 +1,5 @@
 // Service Worker AtelierPilot — Cache-first pour fonctionnement hors-ligne
-const CACHE_NAME = 'atelierpilot-v1';
+const CACHE_NAME = 'atelierpilot-v2';
 
 // Fichiers à mettre en cache lors de l'installation
 const PRECACHE_URLS = [
@@ -27,31 +27,31 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch : cache-first, puis réseau, puis fallback
+// Fetch : network-first (réseau d'abord, cache en fallback hors-ligne)
 self.addEventListener('fetch', (event) => {
-  // Ignorer les requêtes non-GET et les requêtes vers des API externes
+  // Ignorer les requêtes non-GET
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-
-      return fetch(event.request).then((response) => {
-        // Ne pas cacher les réponses non valides
-        if (!response || response.status !== 200 || response.type !== 'basic') {
-          return response;
-        }
-
-        // Cacher la réponse pour usage hors-ligne
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+    fetch(event.request).then((response) => {
+      // Ne pas cacher les réponses non valides
+      if (!response || response.status !== 200 || response.type !== 'basic') {
         return response;
-      });
-    }).catch(() => {
-      // Fallback hors-ligne : retourner la page d'accueil pour les navigations
-      if (event.request.mode === 'navigate') {
-        return caches.match('/index.html');
       }
+
+      // Mettre à jour le cache avec la réponse fraîche
+      const clone = response.clone();
+      caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+      return response;
+    }).catch(() => {
+      // Hors-ligne : servir depuis le cache
+      return caches.match(event.request).then((cached) => {
+        if (cached) return cached;
+        // Fallback navigation → page d'accueil
+        if (event.request.mode === 'navigate') {
+          return caches.match('/index.html');
+        }
+      });
     })
   );
 });
