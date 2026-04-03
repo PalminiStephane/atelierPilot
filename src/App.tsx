@@ -65,7 +65,7 @@ function App() {
       />
 
       {/* Contenu principal avec padding pour header et bottom nav */}
-      <main className="flex-1 pt-16 pb-20 px-4 max-w-2xl mx-auto w-full">
+      <main className="flex-1 max-w-2xl mx-auto w-full" style={{ paddingTop: '5.5rem', paddingBottom: '6rem', paddingLeft: '1.25rem', paddingRight: '1.25rem' }}>
         {showProjects ? (
           <ProjectsModule
             onLoad={handleLoadProject}
