@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FF6B00"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="28" fill="none" stroke="url(#g)" stroke-width="4"/>
+  <path d="M32 12 L35 20 L44 20 L37 26 L39 35 L32 29 L25 35 L27 26 L20 20 L29 20Z" fill="url(#g)"/>
+  <circle cx="32" cy="32" r="6" fill="url(#g)"/>
+  <!-- Dents d'engrenage -->
+  <g fill="url(#g)">
+    <rect x="30" y="2" width="4" height="8" rx="1"/>
+    <rect x="30" y="54" width="4" height="8" rx="1"/>
+    <rect x="2" y="30" width="8" height="4" rx="1"/>
+    <rect x="54" y="30" width="8" height="4" rx="1"/>
+    <rect x="9" y="9" width="4" height="8" rx="1" transform="rotate(45 11 13)"/>
+    <rect x="51" y="9" width="4" height="8" rx="1" transform="rotate(-45 53 13)"/>
+    <rect x="9" y="47" width="4" height="8" rx="1" transform="rotate(-45 11 51)"/>
+    <rect x="51" y="47" width="4" height="8" rx="1" transform="rotate(45 53 51)"/>
+  </g>
+</svg>

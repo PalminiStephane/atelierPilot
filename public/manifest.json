@@ -1,0 +1,19 @@
+{
+  "name": "AtelierPilot — Guide d'usinage",
+  "short_name": "AtelierPilot",
+  "description": "Outil de calcul pour atelier d'usinage : cercle de perçage, vitesses de coupe, taraudage, conversions",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#FF6B00",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "productivity"]
+}

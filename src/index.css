@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+/* === Variables CSS — Thème dark industriel === */
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-card: #111827;
+  --bg-input: #0d1117;
+  --border: #1e2d3d;
+  --text-primary: #e2e8f0;
+  --text-muted: #8899aa;
+  --text-dim: #5a6a7a;
+  --accent-orange: #FF6B00;
+  --accent-blue: #4A90D9;
+  --accent-green: #22c55e;
+  --accent-yellow: #f59e0b;
+  --accent-purple: #a78bfa;
+  --accent-red: #ef4444;
+}
+
+/* === Reset et base === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* === Typographie === */
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.font-heading {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* === Scrollbar personnalisée === */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-dim);
+}
+
+/* === Animations === */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.5s ease-out infinite;
+}
+
+/* === Utilitaires de couleur d'accent === */
+.text-accent-orange { color: var(--accent-orange); }
+.text-accent-blue { color: var(--accent-blue); }
+.text-accent-green { color: var(--accent-green); }
+.text-accent-yellow { color: var(--accent-yellow); }
+.text-accent-purple { color: var(--accent-purple); }
+.text-accent-red { color: var(--accent-red); }
+
+.bg-accent-orange { background-color: var(--accent-orange); }
+.bg-accent-blue { background-color: var(--accent-blue); }
+.bg-accent-green { background-color: var(--accent-green); }
+.bg-accent-yellow { background-color: var(--accent-yellow); }
+.bg-accent-purple { background-color: var(--accent-purple); }
+
+.border-accent-orange { border-color: var(--accent-orange); }
+.border-accent-blue { border-color: var(--accent-blue); }
+.border-accent-green { border-color: var(--accent-green); }
+.border-accent-yellow { border-color: var(--accent-yellow); }
+.border-accent-purple { border-color: var(--accent-purple); }
+
+/* === Input number sans flèches spinner === */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
