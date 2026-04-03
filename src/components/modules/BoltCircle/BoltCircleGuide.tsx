@@ -19,8 +19,8 @@ export function BoltCircleGuide({ holes, currentStep, onStepChange }: BoltCircle
     if (currentStep > 0) onStepChange(currentStep - 1);
   };
 
-  // Direction du déplacement pour la flèche
-  const arrowAngle = Math.atan2(hole.deltaY, hole.deltaX) * (180 / Math.PI);
+  // Direction de la flèche : pointe du centre vers la position du trou sur la pièce
+  const arrowAngle = Math.atan2(hole.yAbs, hole.xAbs) * (180 / Math.PI);
 
   return (
     <StepNavigator
