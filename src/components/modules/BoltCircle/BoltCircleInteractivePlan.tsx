@@ -13,8 +13,8 @@ interface BoltCircleInteractivePlanProps {
 /** Type de popover ouvert */
 type PopoverType = 'hole' | 'piece' | null;
 
-/** Popover d'édition pour les trous */
-function HolePopover({
+/** Panneau d'édition pour les trous — affiché sous le plan */
+function HolePanel({
   params,
   onParamsChange,
   onClose,
@@ -23,90 +23,68 @@ function HolePopover({
   onParamsChange: (p: BoltCircleParams) => void;
   onClose: () => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent | TouchEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
-    };
-    document.addEventListener('mousedown', handler);
-    document.addEventListener('touchstart', handler);
-    return () => {
-      document.removeEventListener('mousedown', handler);
-      document.removeEventListener('touchstart', handler);
-    };
-  }, [onClose]);
-
   const update = (key: keyof BoltCircleParams, value: number) => {
     onParamsChange({ ...params, [key]: value });
   };
 
   return (
     <motion.div
-      ref={ref}
-      initial={{ opacity: 0, scale: 0.9, y: -8 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.9, y: -8 }}
-      transition={{ duration: 0.15 }}
-      className="absolute z-50 rounded-xl p-4 shadow-xl"
-      style={{
-        backgroundColor: 'var(--bg-card)',
-        border: '1px solid var(--accent-orange)',
-        minWidth: '240px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        bottom: '100%',
-        marginBottom: '12px',
-      }}
-      onClick={(e) => e.stopPropagation()}
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+      transition={{ duration: 0.2 }}
+      className="overflow-hidden"
     >
-      {/* Flèche vers le bas */}
       <div
-        className="absolute left-1/2 -translate-x-1/2"
+        className="rounded-xl p-4 shadow-lg"
         style={{
-          bottom: '-6px',
-          width: '12px',
-          height: '12px',
           backgroundColor: 'var(--bg-card)',
           border: '1px solid var(--accent-orange)',
-          borderTop: 'none',
-          borderLeft: 'none',
-          transform: 'translateX(-50%) rotate(45deg)',
         }}
-      />
-      <div className="flex flex-col gap-3">
-        <div className="font-heading text-sm font-bold" style={{ color: 'var(--accent-orange)' }}>
-          Paramètres des trous
+      >
+        <div className="flex items-center justify-between mb-3">
+          <span className="font-heading text-sm font-bold" style={{ color: 'var(--accent-orange)' }}>
+            Paramètres des trous
+          </span>
+          <button
+            onClick={onClose}
+            className="w-7 h-7 rounded-full flex items-center justify-center text-sm"
+            style={{ color: 'var(--text-muted)', backgroundColor: 'var(--bg-input)' }}
+          >
+            ✕
+          </button>
         </div>
-        <PopoverField label="Nb de trous" value={params.holeCount} onChange={(v) => update('holeCount', Math.max(1, Math.round(v)))} step={1} />
-        <PopoverField label="⌀ trous" value={params.holeDiameter} onChange={(v) => update('holeDiameter', v)} unit="mm" />
-        <PopoverField label="⌀ cercle (PCD)" value={params.pcd} onChange={(v) => update('pcd', v)} unit="mm" />
-        <PopoverField label="Profondeur" value={params.holeDepth} onChange={(v) => update('holeDepth', v)} unit="mm" />
-        <PopoverField label="Angle départ" value={params.startAngle} onChange={(v) => update('startAngle', v)} unit="°" />
-        {/* Sens de rotation */}
-        <div className="flex gap-2">
-          {(['cw', 'ccw'] as const).map((dir) => (
-            <button
-              key={dir}
-              onClick={() => onParamsChange({ ...params, direction: dir })}
-              className="flex-1 h-9 rounded-lg text-xs font-medium transition-all"
-              style={{
-                backgroundColor: params.direction === dir ? 'var(--accent-orange)' : 'var(--bg-input)',
-                color: params.direction === dir ? '#fff' : 'var(--text-muted)',
-                border: `1px solid ${params.direction === dir ? 'var(--accent-orange)' : 'var(--border)'}`,
-              }}
-            >
-              {dir === 'cw' ? '↻ Horaire' : '↺ Anti-H'}
-            </button>
-          ))}
+        <div className="flex flex-col gap-3">
+          <PopoverField label="Nb de trous" value={params.holeCount} onChange={(v) => update('holeCount', Math.max(1, Math.round(v)))} step={1} />
+          <PopoverField label="⌀ trous" value={params.holeDiameter} onChange={(v) => update('holeDiameter', v)} unit="mm" />
+          <PopoverField label="⌀ cercle (PCD)" value={params.pcd} onChange={(v) => update('pcd', v)} unit="mm" />
+          <PopoverField label="Profondeur" value={params.holeDepth} onChange={(v) => update('holeDepth', v)} unit="mm" />
+          <PopoverField label="Angle départ" value={params.startAngle} onChange={(v) => update('startAngle', v)} unit="°" />
+          {/* Sens de rotation */}
+          <div className="flex gap-2">
+            {(['cw', 'ccw'] as const).map((dir) => (
+              <button
+                key={dir}
+                onClick={() => onParamsChange({ ...params, direction: dir })}
+                className="flex-1 h-9 rounded-lg text-xs font-medium transition-all"
+                style={{
+                  backgroundColor: params.direction === dir ? 'var(--accent-orange)' : 'var(--bg-input)',
+                  color: params.direction === dir ? '#fff' : 'var(--text-muted)',
+                  border: `1px solid ${params.direction === dir ? 'var(--accent-orange)' : 'var(--border)'}`,
+                }}
+              >
+                {dir === 'cw' ? '↻ Horaire' : '↺ Anti-H'}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </motion.div>
   );
 }
 
-/** Popover d'édition pour la pièce */
-function PiecePopover({
+/** Panneau d'édition pour la pièce — affiché sous le plan */
+function PiecePanel({
   params,
   onParamsChange,
   onClose,
@@ -115,55 +93,32 @@ function PiecePopover({
   onParamsChange: (p: BoltCircleParams) => void;
   onClose: () => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent | TouchEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
-    };
-    document.addEventListener('mousedown', handler);
-    document.addEventListener('touchstart', handler);
-    return () => {
-      document.removeEventListener('mousedown', handler);
-      document.removeEventListener('touchstart', handler);
-    };
-  }, [onClose]);
-
   return (
     <motion.div
-      ref={ref}
-      initial={{ opacity: 0, scale: 0.9, y: -8 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.9, y: -8 }}
-      transition={{ duration: 0.15 }}
-      className="absolute z-50 rounded-xl p-4 shadow-xl"
-      style={{
-        backgroundColor: 'var(--bg-card)',
-        border: '1px solid var(--accent-blue)',
-        minWidth: '220px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        bottom: '100%',
-        marginBottom: '12px',
-      }}
-      onClick={(e) => e.stopPropagation()}
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+      transition={{ duration: 0.2 }}
+      className="overflow-hidden"
     >
       <div
-        className="absolute left-1/2 -translate-x-1/2"
+        className="rounded-xl p-4 shadow-lg"
         style={{
-          bottom: '-6px',
-          width: '12px',
-          height: '12px',
           backgroundColor: 'var(--bg-card)',
           border: '1px solid var(--accent-blue)',
-          borderTop: 'none',
-          borderLeft: 'none',
-          transform: 'translateX(-50%) rotate(45deg)',
         }}
-      />
-      <div className="flex flex-col gap-3">
-        <div className="font-heading text-sm font-bold" style={{ color: 'var(--accent-blue)' }}>
-          Diamètre de la pièce
+      >
+        <div className="flex items-center justify-between mb-3">
+          <span className="font-heading text-sm font-bold" style={{ color: 'var(--accent-blue)' }}>
+            Diamètre de la pièce
+          </span>
+          <button
+            onClick={onClose}
+            className="w-7 h-7 rounded-full flex items-center justify-center text-sm"
+            style={{ color: 'var(--text-muted)', backgroundColor: 'var(--bg-input)' }}
+          >
+            ✕
+          </button>
         </div>
         <PopoverField
           label="⌀ pièce"
@@ -461,26 +416,25 @@ export function BoltCircleInteractivePlan({
           )}
         </svg>
 
-        {/* Popovers HTML positionnés au centre du plan */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2" style={{ width: '260px' }}>
-          <AnimatePresence>
-            {popover === 'hole' && (
-              <HolePopover
-                params={params}
-                onParamsChange={onParamsChange}
-                onClose={closePopover}
-              />
-            )}
-            {popover === 'piece' && (
-              <PiecePopover
-                params={params}
-                onParamsChange={onParamsChange}
-                onClose={closePopover}
-              />
-            )}
-          </AnimatePresence>
-        </div>
       </div>
+
+      {/* Panneau d'édition sous le plan */}
+      <AnimatePresence>
+        {popover === 'hole' && (
+          <HolePanel
+            params={params}
+            onParamsChange={onParamsChange}
+            onClose={closePopover}
+          />
+        )}
+        {popover === 'piece' && (
+          <PiecePanel
+            params={params}
+            onParamsChange={onParamsChange}
+            onClose={closePopover}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Résumé rapide des paramètres sous le plan */}
       <div
