@@ -105,7 +105,7 @@ export function BoltCircleGuide({ holes, currentStep, onStepChange }: BoltCircle
         {/* Badge dernier trou */}
         {isLast && (
           <div
-            className="mt-2 px-6 py-3 rounded-full font-heading font-bold text-lg"
+            className="mt-2 px-8 py-4 rounded-full font-heading font-bold text-lg"
             style={{ backgroundColor: 'var(--accent-green)', color: '#fff' }}
           >
             Perçage terminé !

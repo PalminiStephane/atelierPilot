@@ -449,6 +449,21 @@ export function BoltCircleInteractivePlan({
         <span>{params.direction === 'cw' ? '↻' : '↺'}</span>
       </div>
 
+      {/* Coordonnées du trou actif */}
+      {holes.length > 0 && holes[currentStep] && (
+        <div
+          className="flex items-center justify-center gap-4 py-2 rounded-lg font-mono text-sm"
+          style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}
+        >
+          <span style={{ color: 'var(--accent-orange)' }}>Trou {currentStep + 1}</span>
+          <span style={{ color: 'var(--text-primary)' }}>X : <strong>{holes[currentStep].xAbs.toFixed(2)}</strong></span>
+          <span style={{ color: 'var(--text-primary)' }}>Y : <strong>{holes[currentStep].yAbs.toFixed(2)}</strong></span>
+          {holes[currentStep].angle !== undefined && (
+            <span style={{ color: 'var(--text-dim)' }}>∠ {holes[currentStep].angle!.toFixed(1)}°</span>
+          )}
+        </div>
+      )}
+
       {/* Navigation entre trous */}
       {holes.length > 0 && (
         <div className="flex gap-3">

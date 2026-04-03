@@ -21,7 +21,7 @@ export function TabBar({ tabs, activeTab, onTabChange, accentColor = 'var(--acce
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
-          className="flex-1 min-w-0 px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-all"
+          className="flex-1 min-w-0 px-2 py-2 rounded-md text-xs sm:text-sm font-medium whitespace-nowrap transition-all"
           style={{
             backgroundColor: activeTab === tab.id ? accentColor : 'transparent',
             color: activeTab === tab.id ? '#fff' : 'var(--text-muted)',
