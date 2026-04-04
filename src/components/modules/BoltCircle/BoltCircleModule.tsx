@@ -8,6 +8,7 @@ import type { BoltCircleParams, BoltCircleView, Hole } from '../../../types';
 
 interface BoltCircleModuleProps {
   onSave?: (params: BoltCircleParams, holes: Hole[]) => void;
+  initialParams?: BoltCircleParams;
 }
 
 /** Valeurs par défaut réalistes pour l'affichage initial */
@@ -28,9 +29,9 @@ const TABS = [
 ];
 
 /** Module complet du cercle de perçage — saisie interactive sur le plan */
-export function BoltCircleModule({ onSave }: BoltCircleModuleProps) {
+export function BoltCircleModule({ onSave, initialParams }: BoltCircleModuleProps) {
   const [view, setView] = useState<BoltCircleView>('plan');
-  const [params, setParams] = useState<BoltCircleParams>(DEFAULT_PARAMS);
+  const [params, setParams] = useState<BoltCircleParams>(initialParams ?? DEFAULT_PARAMS);
   const [currentStep, setCurrentStep] = useState(0);
 
   // Recalcul automatique dès que les paramètres changent

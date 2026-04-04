@@ -9,6 +9,7 @@ import type { RectGridParams, RectGridView, Hole } from '../../../types';
 
 interface RectGridModuleProps {
   onSave?: (params: RectGridParams, holes: Hole[]) => void;
+  initialParams?: RectGridParams;
 }
 
 const TABS = [
@@ -19,19 +20,23 @@ const TABS = [
 ];
 
 /** Module complet de la grille rectangulaire */
-export function RectGridModule({ onSave }: RectGridModuleProps) {
-  const [view, setView] = useState<RectGridView>('form');
-  const [params, setParams] = useState<RectGridParams>({
-    rows: 3,
-    cols: 3,
-    spacingX: 0,
-    spacingY: 0,
-    startX: 0,
-    startY: 0,
-    holeDiameter: 0,
-    holeDepth: 0,
-  });
-  const [holes, setHoles] = useState<Hole[]>([]);
+const DEFAULT_RECT_PARAMS: RectGridParams = {
+  rows: 3,
+  cols: 3,
+  spacingX: 0,
+  spacingY: 0,
+  startX: 0,
+  startY: 0,
+  holeDiameter: 0,
+  holeDepth: 0,
+};
+
+export function RectGridModule({ onSave, initialParams }: RectGridModuleProps) {
+  const [view, setView] = useState<RectGridView>(initialParams ? 'table' : 'form');
+  const [params, setParams] = useState<RectGridParams>(initialParams ?? DEFAULT_RECT_PARAMS);
+  const [holes, setHoles] = useState<Hole[]>(() =>
+    initialParams ? calcRectGrid(initialParams) : []
+  );
   const [currentStep, setCurrentStep] = useState(0);
 
   const handleCalculate = useCallback(() => {

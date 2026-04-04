@@ -13,6 +13,7 @@ import type { ModuleId, Project, BoltCircleParams, RectGridParams, Hole } from '
 function App() {
   const [activeModule, setActiveModule] = useState<ModuleId>('bolt_circle');
   const [showProjects, setShowProjects] = useState(false);
+  const [loadedProject, setLoadedProject] = useState<Project | null>(null);
 
   // Sauvegarde d'un projet avec prompt pour le nom
   const handleSaveBoltCircle = useCallback((params: BoltCircleParams, holes: Hole[]) => {
@@ -48,13 +49,8 @@ function App() {
   // Charger un projet sauvegardé
   const handleLoadProject = useCallback((project: Project) => {
     setShowProjects(false);
-    if (project.type === 'bolt_circle') {
-      setActiveModule('bolt_circle');
-    } else {
-      setActiveModule('rect_grid');
-    }
-    // Note: pour un chargement complet il faudrait passer les params au module,
-    // mais cette version permet au moins de naviguer vers le bon module
+    setLoadedProject(project);
+    setActiveModule(project.type === 'bolt_circle' ? 'bolt_circle' : 'rect_grid');
   }, []);
 
   return (
@@ -73,11 +69,23 @@ function App() {
           />
         ) : (
           <>
-            {activeModule === 'bolt_circle' && <BoltCircleModule onSave={handleSaveBoltCircle} />}
+            {activeModule === 'bolt_circle' && (
+              <BoltCircleModule
+                key={loadedProject?.id ?? 'default'}
+                onSave={handleSaveBoltCircle}
+                initialParams={loadedProject?.type === 'bolt_circle' ? loadedProject.params as BoltCircleParams : undefined}
+              />
+            )}
             {activeModule === 'cutting_speed' && <CuttingSpeedModule />}
             {activeModule === 'threading' && <ThreadingModule />}
             {activeModule === 'tools' && <ToolsModule />}
-            {activeModule === 'rect_grid' && <RectGridModule onSave={handleSaveRectGrid} />}
+            {activeModule === 'rect_grid' && (
+              <RectGridModule
+                key={loadedProject?.id ?? 'default'}
+                onSave={handleSaveRectGrid}
+                initialParams={loadedProject?.type === 'rect_grid' ? loadedProject.params as RectGridParams : undefined}
+              />
+            )}
           </>
         )}
       </main>
