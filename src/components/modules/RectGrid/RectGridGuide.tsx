@@ -57,7 +57,7 @@ export function RectGridGuide({ holes, currentStep, onStepChange }: RectGridGuid
         </div>
 
         {isLast && (
-          <div className="mt-2 px-6 py-3 rounded-full font-heading font-bold text-lg" style={{ backgroundColor: 'var(--accent-green)', color: '#fff' }}>
+          <div className="mt-2 px-8 py-4 rounded-full font-heading font-bold text-lg" style={{ backgroundColor: 'var(--accent-green)', color: '#fff' }}>
             Perçage terminé !
           </div>
         )}

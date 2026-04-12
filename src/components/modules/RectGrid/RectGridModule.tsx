@@ -1,8 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { TabBar } from '../../ui/TabBar';
-import { RectGridForm } from './RectGridForm';
 import { RectGridGuide } from './RectGridGuide';
-import { RectGridPlan } from './RectGridPlan';
+import { RectGridInteractivePlan } from './RectGridInteractivePlan';
 import { BoltCircleTable } from '../BoltCircle/BoltCircleTable';
 import { calcRectGrid } from '../../../utils/calculations';
 import type { RectGridParams, RectGridView, Hole } from '../../../types';
@@ -12,39 +11,49 @@ interface RectGridModuleProps {
   initialParams?: RectGridParams;
 }
 
-const TABS = [
-  { id: 'form', label: 'Saisie' },
-  { id: 'table', label: 'Tableau' },
-  { id: 'guide', label: 'Guidage' },
-  { id: 'plan', label: 'Plan 2D' },
-];
-
-/** Module complet de la grille rectangulaire */
+/** Valeurs par défaut réalistes pour l'affichage initial */
 const DEFAULT_RECT_PARAMS: RectGridParams = {
   rows: 3,
-  cols: 3,
-  spacingX: 0,
-  spacingY: 0,
+  cols: 4,
+  spacingX: 20,
+  spacingY: 20,
   startX: 0,
   startY: 0,
-  holeDiameter: 0,
-  holeDepth: 0,
+  holeDiameter: 6,
+  holeDepth: 10,
 };
 
+const TABS = [
+  { id: 'plan', label: 'Plan 2D' },
+  { id: 'table', label: 'Tableau' },
+  { id: 'guide', label: 'Guidage' },
+];
+
+/** Module complet de la grille rectangulaire — saisie interactive sur le plan */
 export function RectGridModule({ onSave, initialParams }: RectGridModuleProps) {
-  const [view, setView] = useState<RectGridView>(initialParams ? 'table' : 'form');
+  const [view, setView] = useState<RectGridView>('plan');
   const [params, setParams] = useState<RectGridParams>(initialParams ?? DEFAULT_RECT_PARAMS);
-  const [holes, setHoles] = useState<Hole[]>(() =>
-    initialParams ? calcRectGrid(initialParams) : []
-  );
   const [currentStep, setCurrentStep] = useState(0);
 
-  const handleCalculate = useCallback(() => {
-    const result = calcRectGrid(params);
-    setHoles(result);
-    setCurrentStep(0);
-    setView('table');
+  // Recalcul automatique dès que les paramètres changent
+  const holes = useMemo(() => {
+    if (params.rows >= 1 && params.cols >= 1 && params.spacingX > 0 && params.spacingY > 0 && params.holeDiameter > 0 && params.holeDepth > 0) {
+      return calcRectGrid(params);
+    }
+    return [];
   }, [params]);
+
+  const handleParamsChange = useCallback((newParams: RectGridParams) => {
+    setParams(newParams);
+    // Réinitialiser le step si la taille de la grille change
+    if (newParams.rows !== params.rows || newParams.cols !== params.cols) {
+      setCurrentStep(0);
+    }
+  }, [params.rows, params.cols]);
+
+  const handleStepChange = useCallback((step: number) => {
+    setCurrentStep(step);
+  }, []);
 
   return (
     <div className="flex flex-col gap-4">
@@ -63,14 +72,28 @@ export function RectGridModule({ onSave, initialParams }: RectGridModuleProps) {
         )}
       </div>
 
-      {holes.length > 0 && (
-        <TabBar tabs={TABS} activeTab={view} onTabChange={(id) => setView(id as RectGridView)} accentColor="var(--accent-purple)" />
-      )}
+      <TabBar
+        tabs={TABS}
+        activeTab={view}
+        onTabChange={(id) => setView(id as RectGridView)}
+        accentColor="var(--accent-purple)"
+      />
 
-      {view === 'form' && <RectGridForm params={params} onChange={setParams} onCalculate={handleCalculate} />}
-      {view === 'table' && holes.length > 0 && <BoltCircleTable holes={holes} />}
-      {view === 'guide' && holes.length > 0 && <RectGridGuide holes={holes} currentStep={currentStep} onStepChange={setCurrentStep} />}
-      {view === 'plan' && holes.length > 0 && <RectGridPlan params={params} holes={holes} currentStep={currentStep} onStepChange={setCurrentStep} />}
+      {view === 'plan' && (
+        <RectGridInteractivePlan
+          params={params}
+          holes={holes}
+          onParamsChange={handleParamsChange}
+          currentStep={currentStep}
+          onStepChange={handleStepChange}
+        />
+      )}
+      {view === 'table' && holes.length > 0 && (
+        <BoltCircleTable holes={holes} />
+      )}
+      {view === 'guide' && holes.length > 0 && (
+        <RectGridGuide holes={holes} currentStep={currentStep} onStepChange={handleStepChange} />
+      )}
     </div>
   );
 }
